@@ -1,3 +1,8 @@
+**ATTENTION**  
+Please be aware that this library was copied from the original Arduino AVR FreeRTOS library and may still contain files from that library that have no meaning in the context of this package, i.e. the licensing and code of conduct file! Each file retains the license and copyright from where it was taken (FreeRTOS repository or AVR FreeRTOS library, respectively.)
+
+________________________________________________________________________________________________
+
 This is a copy of the RP2040 port of the FreeRTOS SMP branch, packaged as an Arduino library.
 
 It has been created to provide access to FreeRTOS capabilities, with full compatibility to the Arduino environment.
