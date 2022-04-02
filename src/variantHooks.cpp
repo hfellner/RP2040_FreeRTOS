@@ -47,28 +47,12 @@ static void mainCore1()
 	vTaskStartScheduler();
 }
 
-//void initVariant(void) __attribute__ ((OS_main));
-void initVariant(void)
+void initFreeRTOS(void)
 {
     // As the Task stacks are on heap before Task allocated heap variables,
     // the library default __malloc_heap_end = 0 doesn't work.
     //__malloc_heap_end = (char *)(RAMEND - __malloc_margin);
 
-#ifndef NO_USB
-#ifdef USE_TINYUSB
-    TinyUSB_Device_Init(0);
-
-#else
-    __USBStart();
-
-#ifndef DISABLE_USB_SERIAL
-    // Enable serial port for reset/upload always
-    Serial.begin(115200);
-#endif
-#endif
-#endif
-
-    setup();                    // the normal Arduino setup() function is run here.
     vTaskStartScheduler();      // initialise and run the freeRTOS scheduler. Execution should never return here.
 }
 
@@ -89,24 +73,16 @@ void loop() {} //Empty loop function
 extern "C"
 void vApplicationIdleHook( void ) __attribute__((weak));
 
+// Idle functions (USB, events, ...) from the core
+extern void __loop();
+
 void vApplicationIdleHook( void )
 {
 	// the normal Arduino loop() function is run here.
 	loop();
 
-#ifdef USE_TINYUSB
-	yield();
-#endif
-
-	if (arduino::serialEventRun) {
-		arduino::serialEventRun();
-	}
-	if (arduino::serialEvent1Run) {
-		arduino::serialEvent1Run();
-	}
-	if (arduino::serialEvent2Run) {
-		arduino::serialEvent2Run();
-	}
+	// run idle functions from the core
+	__loop();
 }
 
 #endif /* configUSE_IDLE_HOOK == 1 */
