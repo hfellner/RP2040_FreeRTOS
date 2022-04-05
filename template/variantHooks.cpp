@@ -37,41 +37,21 @@
 #include "task.h"
 #include "timers.h"
 
-extern void setup(void);
-extern void loop(void);
-
 /*-----------------------------------------------------------*/
-
-static void mainCore1()
-{
-	vTaskStartScheduler();
-}
 
 void initFreeRTOS(void)
 {
+}
+
+void startFreeRTOS(void)
+{
     // As the Task stacks are on heap before Task allocated heap variables,
+    // --- NOT NEEDED WHEN USING heap_3.c ---
     // the library default __malloc_heap_end = 0 doesn't work.
     //__malloc_heap_end = (char *)(RAMEND - __malloc_margin);
 
-    vTaskStartScheduler();      // initialise and run the freeRTOS scheduler. Execution should never return here.
-}
-
-// Override default implementation to force a single execution thread (i.e. tasks, cores)
-void suspendCores()
-{
-	//vTaskSuspendAll();
-	noInterrupts();
-	rp2040.idleOtherCore();
-	//taskENTER_CRITICAL();
-}
-
-// Override default implementation to resume other execution threads (i.e. tasks, cores)
-void resumeCores()
-{
-    //taskEXIT_CRITICAL();
-	rp2040.resumeOtherCore();
-	interrupts();
-	//xTaskResumeAll();
+	// Initialise and run the freeRTOS scheduler. Execution should never return here.
+    vTaskStartScheduler();
 }
 
 /*-----------------------------------------------------------*/
